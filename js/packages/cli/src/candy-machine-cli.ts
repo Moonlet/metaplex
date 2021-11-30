@@ -710,7 +710,7 @@ programCommand('create_candy_machine')
       if (treasuryBalance === 0) {
         throw new Error(`Cannot use treasury account with 0 balance!`);
       }
-      wallet = treasuryAccount
+      wallet = treasuryAccount;
     }
 
     const config = new PublicKey(cacheContent.program.config);
@@ -816,12 +816,13 @@ programCommand('mint_one_token')
     'custom rpc url since this is a heavy command',
   )
   .action(async (directory, cmd) => {
-    const { keypair, env, cacheName, rpcUrl } = cmd.opts();
+    const { keypair, cmath, env, cacheName, rpcUrl } = cmd.opts();
 
     const cacheContent = loadCache(cacheName, env);
     const configAddress = new PublicKey(cacheContent.program.config);
     const tx = await mint(
       keypair,
+      cmath,
       env,
       configAddress,
       cacheContent.program.uuid,
@@ -849,6 +850,7 @@ programCommand('mint_multiple_tokens')
     const mintToken = async index => {
       const tx = await mint(
         keypair,
+        '',
         env,
         configAddress,
         cacheContent.program.uuid,
@@ -1089,6 +1091,11 @@ function programCommand(name: string) {
       '-k, --keypair <path>',
       `Solana wallet location`,
       '--keypair not provided',
+    )
+    .option(
+      '-cmath, --cmath <path>',
+      `Solana authority location`,
+      '--cmath not provided',
     )
     .option('-l, --log-level <string>', 'log level', setLogLevel)
     .option('-c, --cache-name <string>', 'Cache file name', 'temp');

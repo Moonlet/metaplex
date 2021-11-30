@@ -1,0 +1,50 @@
+# !#/bin/bash
+
+PWD=$(pwd)
+DIRNAME=$(dirname $0)
+
+if [[ $DIRNAME = \.* ]] ; then
+    DIRNAME="$PWD/$DIRNAME"
+fi
+
+function checkSetup() {
+    if [ ! -d "$DIRNAME/.metaplex" ]; then
+        echo ""
+        echo "CLI must be initialized, call $0 install"
+        echo ""
+        exit 1
+    fi
+}
+
+case $1 in
+    candy|candy-machine)    # unknown option
+        
+        node $DIRNAME/js/packages/cli/build/candy-machine-cli.js ${@:2}
+        ;;
+    fair|fair-launch)
+        
+        node $DIRNAME/js/packages/cli/build/fair-launch-cli.js ${@:2}
+        ;;
+    auction|auction-house)
+        
+        node $DIRNAME/js/packages/cli/build/auction-house-cli.js ${@:2}
+        ;;
+    nft)
+        
+        node $DIRNAME/js/packages/cli/build/cli-nft.js ${@:2}
+        ;;
+    build)
+        (cd $DIRNAME/js/packages/cli && yarn && yarn build)
+        ;;
+    *)
+        echo ""
+        echo "Usage $0 <cli>"
+        echo ""
+        echo "CLIs"
+        echo "    install - initializes/updates everything"
+        echo "    build - build clis"
+        echo "    candy - candy machine cli"
+        echo "    fair - fair launch cli"
+        echo "    auction - auction house cli"
+        echo "    nft - nft cli"
+esac

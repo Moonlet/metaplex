@@ -18,6 +18,7 @@ import { sendTransactionWithRetryWithKeypair } from '../helpers/transactions';
 
 export async function mint(
   keypair: string,
+  authorityPath: string,
   env: string,
   configAddress: PublicKey,
   uuid: string,
@@ -26,6 +27,7 @@ export async function mint(
   const mint = Keypair.generate();
 
   const userKeyPair = loadWalletKey(keypair);
+  const authority = loadWalletKey(authorityPath);
   const anchorProgram = await loadCandyProgram(userKeyPair, env, rpcUrl);
   const userTokenAccountAddress = await getTokenWallet(
     userKeyPair.publicKey,
@@ -41,7 +43,7 @@ export async function mint(
   );
 
   const remainingAccounts = [];
-  const signers = [mint, userKeyPair];
+  const signers = [mint, userKeyPair, authority];
   const instructions = [
     anchor.web3.SystemProgram.createAccount({
       fromPubkey: userKeyPair.publicKey,
@@ -118,6 +120,7 @@ export async function mint(
         payer: userKeyPair.publicKey,
         //@ts-ignore
         wallet: candyMachine.wallet,
+        authority: authority.publicKey,
         mint: mint.publicKey,
         metadata: metadataAddress,
         masterEdition,

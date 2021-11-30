@@ -500,6 +500,8 @@ pub struct MintNFT<'info> {
     payer: Signer<'info>,
     #[account(mut)]
     wallet: UncheckedAccount<'info>,
+    #[account(mut)]
+    authority: Signer<'info>,
     // With the following accounts we aren't using anchor macros because they are CPI'd
     // through to token-metadata which will do all the validations we need on them.
     #[account(mut)]
